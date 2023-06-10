@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const UserSchema = new Schema({
@@ -23,8 +23,10 @@ const UserSchema = new Schema({
 });
 
 // module.exports is like providing API from a database, allowing to fetch functions (data in case of API). 
-// Importing the function exported thru module.exports allows us to use those function 
-module.exports = mongoose.model("users", UserSchema) 
+// Importing the function exported thru module.exports allows us to use those function
+const User = mongoose.model('user', UserSchema) 
+User.createIndexes();
+module.exports = User
 // name of model and schema used (inside the model)
 
 // Model: querying and manipulating documents in a collection

@@ -1,15 +1,12 @@
-const connectToMongo = require('./db.js')
+const connectToMongo = require('./db')
 const express = require('express')
 const app = express()
 const port = 3000
 
+// this is used for sending object in request
+app.use(express.json())
 
-
-app.get('/', (req, res) => {
-    res.send('Hello World!')
-})
-
-app.use('/api/auth', require('./routes/auth.js'))
+app.use('/api/auth', require('./routes/auth'))
 
 connectToMongo();
 app.listen(port, () => {
