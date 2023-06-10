@@ -4,6 +4,7 @@ const User = require('../models/User')
 const { body, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const fetchUser = require('../middleware/fetchuser');
 
 const JWT_secret = "HeySiddharth"
 
@@ -44,8 +45,8 @@ router.post('/createuser', [
         }
 
         const authToken = jwt.sign(data, JWT_secret);
-    
-        res.json({authToken})
+
+        res.json({ authToken })
 
     } catch (error) {
         console.error(error.message)
@@ -53,6 +54,59 @@ router.post('/createuser', [
     }
 
 
+})
+
+// logging in a user. Require authentication 
+router.post('/login', [
+    body('email', 'Enter a valid email').isEmail(),
+    body('password', 'Password cannot be empty').exists(),
+], async (req, res) => {
+
+    // checking for errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { email, password } = req.body;
+    try {
+
+        let user = await User.findOne({ email })
+        if (!user) {
+            return res.status(400).json({ error: "Please enter correct credentials" })
+        }
+
+        const passwordCompare = await bcrypt.compare(password, user.password)
+        if (!passwordCompare) {
+            return res.status(400).json({ error: "Please enter correct credentials" })
+        }
+
+        const payload = {
+            user: {
+                id: user.id
+            }
+        }
+
+        const authToken = jwt.sign(payload, JWT_secret);
+        res.json({ authToken })
+
+    } catch (error) {
+        console.error(error.message)
+        res.status(500).send("Some error occured")
+    }
+
+})
+
+router.post('/getuser',fetchUser, async (req, res) => {
+
+    try {
+        let userId = req.user.id;
+        let user = await User.findById(userId).select("-password")
+        res.send(user)
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Internal server error')
+    }
 })
 
 module.exports = router 
