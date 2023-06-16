@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const fetchUser = require('../middleware/fetchuser');
 
 const JWT_secret = "HeySiddharth"
+let success = false;
 
 
 // creating a new user. does not require authentication 
@@ -19,14 +20,14 @@ router.post('/createuser', [
     // checking for errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({success, errors: errors.array() });
     }
 
     try {
         // checking a user with email
         let user = await User.findOne({ email: req.body.email })
         if (user) {
-            return res.status(400).json({ error: "Sorry a user with this email already exists. Try another one" })
+            return res.status(400).json({success, error: "Sorry a user with this email already exists. Try another one" })
         }
 
         const salt = await bcrypt.genSalt(5);
@@ -46,7 +47,7 @@ router.post('/createuser', [
 
         const authToken = jwt.sign(data, JWT_secret);
 
-        res.json({ authToken })
+        res.json({success:true, authToken })
 
     } catch (error) {
         console.error(error.message)
@@ -65,7 +66,7 @@ router.post('/login', [
     // checking for errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({success, errors: errors.array() });
     }
 
     const { email, password } = req.body;
@@ -73,12 +74,12 @@ router.post('/login', [
 
         let user = await User.findOne({ email })
         if (!user) {
-            return res.status(400).json({ error: "Please enter correct credentials" })
+            return res.status(400).json({success, error: "Please enter correct credentials" })
         }
 
         const passwordCompare = await bcrypt.compare(password, user.password)
         if (!passwordCompare) {
-            return res.status(400).json({ error: "Please enter correct credentials" })
+            return res.status(400).json({success, error: "Please enter correct credentials" })
         }
 
         const payload = {
@@ -88,7 +89,7 @@ router.post('/login', [
         }
 
         const authToken = jwt.sign(payload, JWT_secret);
-        res.json({ authToken })
+        res.json({success:true, authToken })
 
     } catch (error) {
         console.error(error.message)
