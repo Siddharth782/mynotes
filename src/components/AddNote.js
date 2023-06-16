@@ -10,6 +10,7 @@ const AddNote = () => {
     const SubmitNote = (e) => {
         e.preventDefault();
         addNote(newNote.title,newNote.description)
+        setNewNote({ title: "", description: '' })
     }
 
     const onTextChange = (e) => {
@@ -20,13 +21,13 @@ const AddNote = () => {
         <form>
             <div className="my-3">
                 <label htmlFor="title" className="form-label">Title</label>
-                <input type="text" className="form-control" id="title" name='title' onChange={onTextChange} />
+                <input type="text" className="form-control" id="title"  value={newNote.title} name='title' onChange={onTextChange} />
             </div>
             <div className="my-3">
                 <label htmlFor="description" className="form-label">Description</label>
-                <input type="text" className="form-control" id="description" name='description' onChange={onTextChange} />
+                <input type="text" className="form-control" id="description" value={newNote.description} name='description' onChange={onTextChange}/>
             </div>
-            <button type="submit" className="btn btn-primary" onClick={SubmitNote}>Submit</button>
+            <button type="submit" disabled={newNote.title.length < 5 || newNote.description.length<5} className="btn btn-primary" onClick={SubmitNote}>Submit</button>
         </form>
     )
 }

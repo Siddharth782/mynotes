@@ -4,12 +4,15 @@ import { MdDeleteOutline, MdEditNote } from 'react-icons/md'
 
 const Notes = () => {
     const ref = useRef('');
+    const refClose = useRef('');
     const context = useContext(noteContext);
-    const { notes, deleteNote, getNote } = context;
+    const { notes, deleteNote, getNote, updateNote } = context;
 
-    const [newNote, setNewNote] = useState({ title: "", description: '' });
-    
+    const [newNote, setNewNote] = useState({ id: "", title: "", description: '' });
+
     const SubmitNote = (e) => {
+        refClose.current.click();
+        updateNote({id:newNote.id,title:newNote.title,description:newNote.description})
         e.preventDefault();
     }
 
@@ -21,10 +24,10 @@ const Notes = () => {
         getNote();
     }, [])
 
-    const updateNote = (note ) => {
+    const updatingNote = (note) => {
         ref.current.click();
-        // setNewNote({title:note.title, description:note.description})
-        setNewNote(note) //both same as yk it 
+        setNewNote({ id: note._id, title: note.title, description: note.description })
+        // storing id, title and description of note in a newNote state 
     }
 
     const Noteitem = (props) => {
@@ -35,7 +38,8 @@ const Notes = () => {
                     <div className='d-flex justify-content-between'>
                         <h5 className="card-title">{note.title}</h5>
                         <MdDeleteOutline cursor={'pointer'} size={25} onClick={() => deleteNote(note._id)} />
-                        <MdEditNote cursor={'pointer'} size={25} onClick={() => updateNote(note)} />
+                        <MdEditNote cursor={'pointer'} size={25} onClick={() => updatingNote(note)} />
+                        {/* we click this button which opens updating Note function, in there we are pressing launch edit note modal button which will open the edit modal */}
                     </div>
                     <p className="card-text"> {note.description} </p>
                 </div>
@@ -45,11 +49,12 @@ const Notes = () => {
 
     return (
         <>
+        {/* we are pressing this button on click of editNote icon with the help of useRef hook */}
             <button type="button" ref={ref} className="btn btn-primary d-none" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Launch demo modal
+                Launch Edit Note Modal
             </button>
 
-            <div className="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">
@@ -69,8 +74,8 @@ const Notes = () => {
                             </form>
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" className="btn btn-primary" onClick={SubmitNote}>Update Note</button>
+                            <button type="button" ref={refClose} className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" disabled={newNote.title.length < 5 || newNote.description.length<5} className="btn btn-primary" onClick={SubmitNote}>Update Note</button>
                         </div>
                     </div>
                 </div>
@@ -79,7 +84,7 @@ const Notes = () => {
             <div className='row md-3' style={{ justifyContent: 'center', alignItems: 'center' }}>
                 <h2> Your Notes</h2>
                 {
-                    notes.map((note) => <Noteitem key={note._id} note={note} />)
+                    notes?.map((note) => <Noteitem key={note._id} note={note} />)
                 }
             </div>
 
