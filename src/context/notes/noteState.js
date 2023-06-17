@@ -4,13 +4,14 @@ import { useState } from "react";
 const NoteState = (props) => {
     const URL = "http://localhost:8000"
     const [notes, setNotes] = useState()
+    const auth_Token = localStorage.getItem('authToken');
 
     const getNote = async () => {
         const response = await fetch(`${URL}/api/notes/fetchallnotes`, {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json',
-                "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjQ4NDg5MzFiOGZmYzNiZGMyMmI4OGM3In0sImlhdCI6MTY4NjQxODYyMH0.lQBvbwuwoHBzqtauEsN9vqdewOR6i84EENTMqtnXf9c"
+                "auth-token": auth_Token
             }
         });
         const jsonData = await response.json();
@@ -23,7 +24,7 @@ const NoteState = (props) => {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
-                "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjQ4NDg5MzFiOGZmYzNiZGMyMmI4OGM3In0sImlhdCI6MTY4NjQxODYyMH0.lQBvbwuwoHBzqtauEsN9vqdewOR6i84EENTMqtnXf9c"
+                "auth-token": auth_Token
             },
             body: JSON.stringify({ title, description })
         });
@@ -38,18 +39,18 @@ const NoteState = (props) => {
             method: "DELETE",
             headers: {
                 'Content-Type': 'application/json',
-                "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjQ4NDg5MzFiOGZmYzNiZGMyMmI4OGM3In0sImlhdCI6MTY4NjQxODYyMH0.lQBvbwuwoHBzqtauEsN9vqdewOR6i84EENTMqtnXf9c"
+                "auth-token": auth_Token
             },
         });
         getNote();
     }
 
-    const updateNote = async ({id, title, description}) => {
+    const updateNote = async ({ id, title, description }) => {
         const response = await fetch(`${URL}/api/notes/updatenote/${id}`, {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json',
-                "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjQ4NDg5MzFiOGZmYzNiZGMyMmI4OGM3In0sImlhdCI6MTY4NjQxODYyMH0.lQBvbwuwoHBzqtauEsN9vqdewOR6i84EENTMqtnXf9c"
+                "auth-token": auth_Token
             },
             body: JSON.stringify({ title, description })
         });

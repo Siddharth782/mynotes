@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const SignUp = () => {
+const SignUp = (props) => {
     const [credentials, setCredentials] = useState({ name: "", email: "", password: "", cpassword: "" })
     const navigate = useNavigate();
 
@@ -12,7 +12,7 @@ const SignUp = () => {
     const checkIn = async (e) => {
         e.preventDefault();
         if (credentials.password !== credentials.cpassword) {
-            return alert("passwords don't match")
+           return props.showAlert("Passwords don't match","danger")
         }
         let res = await fetch("http://localhost:8000/api/auth/createuser", {
             method: "POST",
@@ -26,14 +26,16 @@ const SignUp = () => {
         if (res.success) {
             localStorage.setItem('authToken', res.authToken)
             navigate('/')
+            props.showAlert("Successfully Created User","success")
         }
         else{
-            alert(res.success)
+            props.showAlert("Error while creating user","danger")
         }
     }
 
     return (
-        <div className='container'>
+        <div className='container my-2'>
+            <h2>Create an account to use myNotes</h2>
             <form onSubmit={checkIn}>
                 <div className="mb-3">
                     <label htmlFor="name" className="form-label">Name</label>

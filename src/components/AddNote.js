@@ -18,16 +18,17 @@ const AddNote = () => {
     }
 
     return (
-        <form>
+        <form onSubmit={SubmitNote}>
+            <h3 className='my-2'>Add a new Note</h3>
             <div className="my-3">
                 <label htmlFor="title" className="form-label">Title</label>
-                <input type="text" className="form-control" id="title"  value={newNote.title} name='title' onChange={onTextChange} />
+                <input type="text" className="form-control" id="title"  value={newNote.title} name='title' onChange={onTextChange} minLength={5} />
             </div>
             <div className="my-3">
                 <label htmlFor="description" className="form-label">Description</label>
-                <input type="text" className="form-control" id="description" value={newNote.description} name='description' onChange={onTextChange}/>
+                <input type="text" className="form-control" id="description" value={newNote.description} name='description' onChange={onTextChange} minLength={5}/>
             </div>
-            <button type="submit" disabled={newNote.title.length < 5 || newNote.description.length<5} className="btn btn-primary" onClick={SubmitNote}>Submit</button>
+            <button type="submit" className="btn btn-primary">Submit</button>
         </form>
     )
 }

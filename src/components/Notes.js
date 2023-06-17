@@ -1,12 +1,14 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import noteContext from '../context/notes/noteContext';
 import { MdDeleteOutline, MdEditNote } from 'react-icons/md'
+import {useNavigate} from 'react-router-dom'
 
 const Notes = () => {
     const ref = useRef('');
     const refClose = useRef('');
     const context = useContext(noteContext);
     const { notes, deleteNote, getNote, updateNote } = context;
+    let navigation = useNavigate();
 
     const [newNote, setNewNote] = useState({ id: "", title: "", description: '' });
 
@@ -21,7 +23,10 @@ const Notes = () => {
     }
 
     useEffect(() => {
-        getNote();
+        if (localStorage.getItem('authToken')) {
+            getNote();
+        }
+        else navigation('/login')
     }, [])
 
     const updatingNote = (note) => {
@@ -81,8 +86,8 @@ const Notes = () => {
                 </div>
             </div>
 
-            <div className='row md-3' style={{ justifyContent: 'center', alignItems: 'center' }}>
-                <h2> Your Notes</h2>
+            <div className='row md-3 my-4' style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <h4> Your Notes</h4>
                 {
                     notes?.map((note) => <Noteitem key={note._id} note={note} />)
                 }

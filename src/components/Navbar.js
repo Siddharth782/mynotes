@@ -1,9 +1,14 @@
 import React from 'react'
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation,useNavigate } from 'react-router-dom';
 
 function Navbar() {
     let location = useLocation();
+    let navigate = useNavigate();
 
+    const handleLogout = () =>{
+        localStorage.removeItem('authToken');
+        navigate('/login')
+    }
     
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -15,14 +20,14 @@ function Navbar() {
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                         <li className="nav-item">
-                            <Link className={`nav-link ${location.pathname === '/'?'active':''}`} aria-current="page" to="/">Home</Link>
+                            <Link className={`nav-link ${location.pathname === '/' ? 'active' : ''}`} aria-current="page" to="/">Your Notes</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className={`nav-link ${location.pathname === '/about'?'active':''}`} to="/about">About</Link>
+                            <Link className={`nav-link ${location.pathname === '/about' ? 'active' : ''}`} to="/about">About</Link>
                         </li>
                     </ul>
-                    <Link to='/login' className='btn btn-primary mx-2'> Login </Link>
-                    <Link to='/signup' className='btn btn-primary mx-2'> Sign Up </Link>
+                    {!localStorage.getItem('authToken') ? (<><Link to='/login' className='btn btn-primary mx-2'> Login </Link>
+                        <Link to='/signup' className='btn btn-primary mx-2'> Sign Up </Link></>) : <button onClick={handleLogout} className="btn btn-primary">Logout</button>}
                 </div>
             </div>
         </nav>
